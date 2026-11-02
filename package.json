@@ -8,7 +8,9 @@
     "seed": "node src/database/seed.js",
     "test": "jest --runInBand",
     "test:coverage": "jest --runInBand --coverage",
-    "test:browser": "node tests/browser/browser_automation.js"
+    "test:browser": "node tests/browser/browser_automation.js",
+    "test:selenium": "node tests/selenium/run.js",
+    "test:selenium:headed": "SELENIUM_HEADLESS=false node tests/selenium/run.js"
   },
   "keywords": [
     "quiz-portal",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
+    "selenium-webdriver": "^4.51.0",
     "supertest": "^7.0.0"
   },
   "jest": {

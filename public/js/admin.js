@@ -343,7 +343,7 @@ const Admin = {
       await Admin.loadQuizzes();
       await Admin.loadAnalyticsOverview();
     } catch (e) {
-      alert(`Cannot publish quiz: ${e.message}`);
+      Utils.showAlert('admin-alert-container', `Cannot publish quiz: ${e.message}`, 'danger');
     }
   },
 

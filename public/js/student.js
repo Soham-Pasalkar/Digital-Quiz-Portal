@@ -82,7 +82,7 @@ const Student = {
       if (heroQ) heroQ.textContent = `${qCount} MCQs`;
       if (heroAction) {
         heroAction.innerHTML = `
-          <button class="btn btn-primary btn-lg" onclick="Student.startExam(${featuredQuiz.id})">
+          <button class="btn btn-primary btn-lg" id="hero-start-btn" onclick="Student.startExam(${featuredQuiz.id})">
             ${isResumed ? 'Resume Assessment &rarr;' : 'Begin Assessment &rarr;'}
           </button>
         `;
@@ -101,7 +101,7 @@ const Student = {
                 <th style="text-align: right;">Action</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="student-catalog-tbody">
               ${quizzes.map(q => {
                 const dur = q.durationMinutes || q.duration_minutes || 10;
                 const count = q.questionCount !== undefined ? q.questionCount : (q.question_count || 0);
