@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Quiz Portal — Online Examination &amp; Assessment System</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+
+  <!-- ======================================================================
+       Site Header & User Navigation
+       ====================================================================== -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="#" class="brand" onclick="App.navigateTo(); return false;">
+        <div class="brand-icon">Q</div>
+        <div>
+          <span class="brand-title">Digital Quiz Portal</span>
+          <span class="brand-tag">Academic Assessment System</span>
+        </div>
+      </a>
+
+      <!-- Authenticated User Profile & Controls -->
+      <div id="user-nav-container" class="user-nav hidden">
+        <div class="user-chip">
+          <div class="user-avatar-sm" id="nav-user-avatar">U</div>
+          <div>
+            <strong id="nav-user-name" style="font-size: 0.875rem;">—</strong>
+            <span id="nav-user-role" class="badge badge-published" style="margin-left: 0.35rem;">Student</span>
+          </div>
+        </div>
+        <button id="btn-nav-logout" class="btn btn-secondary btn-sm" type="button">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       Main Content Container
+       ====================================================================== -->
+  <main class="page-container">
+
+    <!-- ==================================================================
+         1. Authentication View (#login)
+         ================================================================== -->
+    <section id="view-login" class="hidden">
+      <div class="login-wrapper">
+        <div class="card" style="box-shadow: var(--shadow-elevated); padding: 2.25rem 2rem;">
+          <div style="margin-bottom: 1.75rem; text-align: center;">
+            <div class="brand-icon" style="margin: 0 auto 0.85rem; width: 44px; height: 44px; font-size: 1.35rem;">Q</div>
+            <h2>Portal Sign-In</h2>
+            <p class="text-muted">Enter verified academic credentials to access assessments</p>
+          </div>
+
+          <div id="login-alert-container" class="hidden"></div>
+
+          <form id="login-form">
+            <div class="form-group">
+              <label class="form-label" for="login-username">Username</label>
+              <input
+                type="text"
+                id="login-username"
+                class="form-control"
+                placeholder="e.g. admin or student1"
+                autocomplete="username"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="login-password">Password</label>
+              <input
+                type="password"
+                id="login-password"
+                class="form-control"
+                placeholder="Enter account password"
+                autocomplete="current-password"
+                required
+              >
+            </div>
+
+            <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block btn-lg" style="margin-top: 1rem;">
+              Sign In to Portal &rarr;
+            </button>
+          </form>
+
+          <!-- Academic Evaluation Quick-Credentials Bar -->
+          <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border); font-size: 0.8rem;">
+            <p class="text-muted" style="margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">
+              Academic Evaluation Profiles (Click to fill):
+            </p>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.fillDemoCredentials('admin', 'admin123')">
+                Admin: admin / admin123
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.fillDemoCredentials('student1', 'student123')">
+                Student: student1 / student123
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="App.fillDemoCredentials('student2', 'student123')">
+                Student: student2 / student123
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         2. Administrator Dashboard (#admin)
+         ================================================================== -->
+    <section id="view-admin" class="hidden">
+      <div id="admin-alert-container" class="hidden"></div>
+
+      <div class="admin-workspace">
+        
+        <!-- Refined Dark Espresso Desktop Sidebar -->
+        <aside class="admin-sidebar">
+          <div class="sidebar-brand-box">
+            <div class="sidebar-brand-icon">Q</div>
+            <div>
+              <div class="sidebar-brand-text">Quiz Portal</div>
+              <div style="font-size: 0.725rem; color: var(--color-caramel); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;">
+                Administration
+              </div>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav">
+            <a class="sidebar-nav-item active" id="admin-nav-overview" onclick="Admin.scrollToSection('admin-section-overview'); return false;">
+              <span class="sidebar-nav-icon">📊</span>
+              <span>Overview</span>
+            </a>
+            <a class="sidebar-nav-item" id="admin-nav-analytics" onclick="Admin.scrollToSection('admin-section-analytics'); return false;">
+              <span class="sidebar-nav-icon">📈</span>
+              <span>Assessment Analytics</span>
+            </a>
+            <a class="sidebar-nav-item" id="admin-nav-quizzes" onclick="Admin.scrollToSection('admin-section-quizzes'); return false;">
+              <span class="sidebar-nav-icon">📝</span>
+              <span>Exam Management</span>
+            </a>
+            <a class="sidebar-nav-item" id="admin-nav-submissions" onclick="Admin.scrollToSection('admin-section-submissions'); return false;">
+              <span class="sidebar-nav-icon">📋</span>
+              <span>Student Submissions</span>
+            </a>
+          </nav>
+
+          <div class="sidebar-footer">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div class="user-avatar-sm" style="background-color: var(--color-caramel);">A</div>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-on-dark);">Admin</div>
+                  <div style="font-size: 0.725rem; color: var(--text-on-dark-muted);">Instructor</div>
+                </div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="Auth.logout()" title="Sign out from portal" style="background: rgba(255,255,255,0.08); border-color: var(--border-dark); color: var(--text-on-dark);">
+                Exit
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Administrator Content Area -->
+        <div class="admin-main-area">
+
+          <!-- Dashboard Overview Header -->
+          <div class="admin-header-bar" id="admin-section-overview">
+            <div>
+              <h1 class="admin-greeting-title" id="admin-greeting-text">Good morning, Admin</h1>
+              <p class="admin-greeting-sub">Here's an overview of your academic assessments and cohort performance.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary btn-sm" onclick="Admin.init()">
+                ↺ Refresh Data
+              </button>
+              <button class="btn btn-primary" onclick="Admin.openCreateQuizModal()">
+                + Create New Quiz
+              </button>
+            </div>
+          </div>
+
+          <!-- Overview Analytics KPI Cards -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Enrolled Students</div>
+              <div class="stat-value" id="stat-total-students">0</div>
+              <div class="stat-subtext">Active student records</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Total Quizzes</div>
+              <div class="stat-value" id="stat-total-quizzes">0</div>
+              <div class="stat-subtext"><span id="stat-published-quizzes" style="font-weight: 600; color: var(--color-primary);">0</span> published live</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Exam Submissions</div>
+              <div class="stat-value" id="stat-total-submissions">0</div>
+              <div class="stat-subtext">Graded attempts recorded</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Overall Pass Rate</div>
+              <div class="stat-value" id="stat-pass-rate">0.00%</div>
+              <div class="stat-subtext">&ge; 50% passing standard</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Average Score</div>
+              <div class="stat-value" id="stat-avg-score">0.00</div>
+              <div class="stat-subtext">Across all submissions</div>
+            </div>
+          </div>
+
+          <!-- Polished Analytics Section (Real SVG Charts) -->
+          <div id="admin-section-analytics" style="margin-bottom: 2rem;">
+            <div style="margin-bottom: 1rem;">
+              <h2>Assessment Analytics &amp; Visual Insights</h2>
+              <p class="text-muted" style="margin: 0;">Interactive performance distributions derived directly from authoritative backend data.</p>
+            </div>
+
+            <div class="analytics-charts-grid">
+              <!-- Chart 1: Assessment Results Distribution (SVG Donut) -->
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h3 class="chart-title">Submission Outcomes</h3>
+                  <p class="chart-sub">Passed versus failed examination submissions</p>
+                </div>
+                <div id="chart-results-donut">
+                  <!-- Populated by Utils.renderDonutChart() -->
+                </div>
+              </div>
+
+              <!-- Chart 2: Quiz Performance Comparison (SVG Bars) -->
+              <div class="chart-card">
+                <div class="chart-card-header">
+                  <h3 class="chart-title">Quiz Performance Comparison</h3>
+                  <p class="chart-sub">Average percentage scores across assessment modules</p>
+                </div>
+                <div id="chart-quiz-bars">
+                  <!-- Populated by Utils.renderQuizBars() -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart 3: Academic Grade Distribution Bands -->
+            <div class="chart-card" style="margin-bottom: 1.5rem;">
+              <div class="chart-card-header">
+                <h3 class="chart-title">Cohort Grade Band Distribution</h3>
+                <p class="chart-sub">Student outcomes stratified into institutional grade boundaries</p>
+              </div>
+              <div id="chart-grade-bands">
+                <!-- Populated by Utils.renderGradeBands() -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz Management Section -->
+          <div class="card" id="admin-section-quizzes" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+              <div>
+                <h2>Examination Management</h2>
+                <p class="text-muted" style="margin: 0;">Author, configure, publish, and manage academic assessment modules.</p>
+              </div>
+              <button class="btn btn-primary" onclick="Admin.openCreateQuizModal()">
+                + Create New Quiz
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Quiz Title</th>
+                    <th>Duration</th>
+                    <th>Questions</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-quizzes-tbody">
+                  <tr>
+                    <td colspan="6" class="text-muted" style="text-align: center; padding: 2rem;">
+                      Loading quiz records...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tabbed Performance & Audit Analytics Section -->
+          <div class="card" id="admin-section-submissions">
+            <div class="tab-nav">
+              <button class="tab-btn active" id="tab-btn-perf" onclick="Admin.switchTab('perf')">
+                Quiz Analytics Summary
+              </button>
+              <button class="tab-btn" id="tab-btn-subs" onclick="Admin.switchTab('subs')">
+                Student Submissions Audit (STQA §1, Page 8)
+              </button>
+            </div>
+
+            <!-- Tab 1: Quiz Performance Aggregation Table -->
+            <div id="tab-pane-perf">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Quiz Title</th>
+                      <th>Status</th>
+                      <th>Total Submissions</th>
+                      <th>Avg Score</th>
+                      <th>Avg Percentage</th>
+                      <th>Passed / Total</th>
+                      <th>Pass Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-quiz-perf-tbody">
+                    <tr><td colspan="7" class="text-muted" style="text-align: center;">Loading analytics...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tab 2: Recent Submissions Audit Table -->
+            <div id="tab-pane-subs" class="hidden">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Submission ID</th>
+                      <th>Student</th>
+                      <th>Quiz Title</th>
+                      <th>Score</th>
+                      <th>Percentage</th>
+                      <th>Result</th>
+                      <th>Timestamp</th>
+                      <th>Audit Breakdown</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-submissions-tbody">
+                    <tr><td colspan="8" class="text-muted" style="text-align: center;">Loading submissions...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         3. Student Dashboard (#student)
+         ================================================================== -->
+    <section id="view-student" class="hidden">
+      <div id="student-alert-container" class="hidden"></div>
+
+      <!-- Welcome Banner Header -->
+      <div style="margin-bottom: 1.75rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.35rem;">
+          Welcome, <span id="student-welcome-name" style="color: var(--color-primary);">Student</span>
+        </h1>
+        <p class="text-muted" style="margin: 0; font-size: 1rem;">
+          Access your assigned academic examinations, monitor your score progression, and inspect verified grade breakdowns.
+        </p>
+      </div>
+
+      <!-- Prominent Featured Assessment Hero Card -->
+      <div class="featured-assessment-hero" id="student-featured-hero">
+        <div>
+          <span class="hero-tag">Active Assessment</span>
+          <h2 class="hero-title" id="hero-quiz-title">Loading next examination...</h2>
+          <p class="text-muted" id="hero-quiz-desc" style="margin: 0;">
+            Ensure you have a stable network connection. Your time begins once you click start.
+          </p>
+          <div class="hero-details">
+            <span class="hero-detail-item">⏱ <strong id="hero-quiz-duration">-- mins</strong></span>
+            <span class="hero-detail-item">❓ <strong id="hero-quiz-questions">-- questions</strong></span>
+            <span class="hero-detail-item">🎯 <strong>50% Passing Mark</strong></span>
+          </div>
+        </div>
+        <div id="hero-action-container">
+          <button class="btn btn-primary btn-lg" id="hero-start-btn" disabled>
+            Start Assessment &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Student Performance Overview KPI Cards -->
+      <div class="stats-grid" id="student-stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Assessments Completed</div>
+          <div class="stat-value" id="student-stat-completed">0</div>
+          <div class="stat-subtext">Finalized exam attempts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Average Score</div>
+          <div class="stat-value" id="student-stat-avg-score">0.00%</div>
+          <div class="stat-subtext">Across past submissions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Assessments Passed</div>
+          <div class="stat-value" id="student-stat-passed">0</div>
+          <div class="stat-subtext">Satisfied passing standard</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Overall Pass Rate</div>
+          <div class="stat-value" id="student-stat-pass-rate">0.00%</div>
+          <div class="stat-subtext">Success ratio</div>
+        </div>
+      </div>
+
+      <!-- Student Score Progression Line Chart -->
+      <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-header">
+          <div>
+            <h3 style="margin-bottom: 0.2rem;">Score Progression Over Time</h3>
+            <p class="text-muted" style="margin: 0; font-size: 0.85rem;">Trajectory of your examination results across test attempts</p>
+          </div>
+        </div>
+        <div id="student-chart-progression" style="min-height: 180px;">
+          <!-- Populated by Utils.renderStudentProgression() -->
+        </div>
+      </div>
+
+      <!-- Available Examinations Section -->
+      <div class="card" style="margin-bottom: 2rem;">
+        <div style="margin-bottom: 1.25rem;">
+          <h2>Available Examinations Catalog</h2>
+          <p class="text-muted" style="margin: 0;">Officially published assessment modules currently open for student attempts.</p>
+        </div>
+        <div id="student-quizzes-container">
+          <p class="text-muted" style="padding: 1.5rem 0; text-align: center;">Loading available quizzes...</p>
+        </div>
+      </div>
+
+      <!-- Academic Performance History Section -->
+      <div class="card">
+        <div style="margin-bottom: 1.25rem;">
+          <h2>Examination History &amp; Grade Records</h2>
+          <p class="text-muted" style="margin: 0;">Audit record of your finalized examination submissions and scores.</p>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Examination Title</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Status</th>
+                <th>Submitted At</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="student-history-tbody">
+              <tr>
+                <td colspan="6" class="text-muted" style="text-align: center; padding: 2rem;">
+                  Loading submission history...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         4. Examination Interface (#exam)
+         ================================================================== -->
+    <section id="view-exam" class="hidden">
+      <div class="exam-layout">
+        <div id="exam-alert-container" class="hidden"></div>
+
+        <!-- Exam Header: Quiz Title & Server-Derived Timer -->
+        <div class="exam-header-bar">
+          <div>
+            <div class="exam-quiz-title" id="exam-quiz-title-display">Academic Examination</div>
+            <div class="text-muted" style="font-size: 0.8rem; margin-top: 0.2rem;">Single-Question Display &bull; Standard Assessment Mode</div>
+          </div>
+          <div class="timer-box" id="exam-timer-box" title="Remaining examination time according to server receipt window">
+            <span style="font-size: 0.85rem; font-weight: normal; color: var(--text-secondary);">TIME:</span>
+            <span id="exam-timer-display">--:--</span>
+          </div>
+        </div>
+
+        <!-- Question Navigation Palette (Pills 1..N) -->
+        <div class="question-nav-palette" id="exam-nav-palette">
+          <!-- Populated by Exam.renderNavPalette() -->
+        </div>
+
+        <!-- Exam Progress Track -->
+        <div class="exam-progress-track">
+          <div id="exam-progress-bar" class="exam-progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <!-- Question Presentation Card -->
+        <div class="question-card">
+          <div class="question-meta" id="exam-question-meta">Question 1 of --</div>
+          <div class="question-text" id="exam-question-text">Loading question text...</div>
+
+          <div class="options-list" id="exam-options-container" role="radiogroup" aria-label="Question choices">
+            <!-- Populated by Exam.renderQuestion() -->
+          </div>
+        </div>
+
+        <!-- Exam Controls Footer -->
+        <div class="exam-footer-bar">
+          <button type="button" class="btn btn-secondary" id="exam-btn-prev" onclick="Exam.prevQuestion()">
+            &larr; Previous
+          </button>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button type="button" class="btn btn-secondary btn-sm" id="exam-btn-clear" onclick="Exam.clearSelection()" style="visibility: hidden;">
+              Clear Choice
+            </button>
+            <button type="button" class="btn btn-primary" id="exam-btn-next" onclick="Exam.nextQuestion()">
+              Next &rarr;
+            </button>
+            <button type="button" class="btn btn-outline" id="exam-btn-submit" onclick="Exam.openSubmitConfirmation()">
+              Submit Exam
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         5. Results & Answer Breakdown View (#results)
+         ================================================================== -->
+    <section id="view-results" class="hidden">
+      <div style="max-width: 820px; margin: 0 auto;">
+        
+        <!-- Results Scorecard -->
+        <div class="results-summary-card">
+          <h2 id="results-quiz-title" style="margin-bottom: 0.5rem; font-size: 1.75rem;">Examination Results</h2>
+          <div class="results-score-display" id="results-score-display">0 / 0</div>
+          <div class="results-percentage" id="results-pct-display">0.00% Academic Score</div>
+          <div id="results-status-badge" style="margin-bottom: 1rem;"></div>
+          <div class="text-muted" id="results-timestamp" style="font-size: 0.85rem; margin-bottom: 1.5rem;">—</div>
+          <button class="btn btn-primary btn-lg" onclick="Results.backToDashboard()">
+            &larr; Return to Dashboard
+          </button>
+        </div>
+
+        <!-- Question-by-Question Audit Breakdown -->
+        <div style="margin-bottom: 1.25rem;">
+          <h3>Detailed Question Audit &amp; Performance Breakdown</h3>
+          <p class="text-muted">Review your submitted choices alongside verified correct answer keys.</p>
+        </div>
+
+        <div id="results-breakdown-container">
+          <!-- Populated by Results.render() -->
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem; margin-bottom: 3rem;">
+          <button class="btn btn-secondary" onclick="Results.backToDashboard()">
+            &larr; Return to Dashboard
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       Modals
+       ====================================================================== -->
+
+  <!-- Modal 1: Create New Quiz -->
+  <div id="modal-create-quiz" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-create-quiz-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-create-quiz-title">Create New Quiz</h3>
+        <button type="button" class="modal-close-btn" onclick="Utils.hideModal('modal-create-quiz')" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="create-quiz-form">
+        <div class="modal-body">
+          <div id="create-quiz-error" class="hidden"></div>
+          <div class="form-group">
+            <label class="form-label" for="new-quiz-title">Quiz Title</label>
+            <input type="text" id="new-quiz-title" class="form-control" placeholder="e.g. Software Testing Fundamentals" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-quiz-duration">Duration (Minutes)</label>
+            <input type="number" id="new-quiz-duration" class="form-control" value="10" min="1" max="180" required>
+            <small class="text-muted">Standard academic duration is 10 minutes with a 30-second submission grace period.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="Utils.hideModal('modal-create-quiz')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Quiz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Existing Quiz -->
+  <div id="modal-edit-quiz" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-edit-quiz-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-edit-quiz-title">Edit Quiz Details</h3>
+        <button type="button" class="modal-close-btn" onclick="Utils.hideModal('modal-edit-quiz')" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="edit-quiz-form">
+        <div class="modal-body">
+          <div id="edit-quiz-error" class="hidden"></div>
+          <input type="hidden" id="edit-quiz-id">
+          <div class="form-group">
+            <label class="form-label" for="edit-quiz-title">Quiz Title</label>
+            <input type="text" id="edit-quiz-title" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-quiz-duration">Duration (Minutes)</label>
+            <input type="number" id="edit-quiz-duration" class="form-control" min="1" max="180" required>
+            <div id="edit-quiz-immutable-notice" class="alert alert-warning hidden" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="Utils.hideModal('modal-edit-quiz')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Question Management -->
+  <div id="modal-questions-manager" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="qm-modal-title">
+    <div class="modal-dialog" style="max-width: 780px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="qm-modal-title">Manage Questions</h3>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="Utils.hideModal('modal-questions-manager')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="qm-immutable-notice" class="alert alert-warning hidden"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h4 style="margin: 0;">Questions in Quiz</h4>
+          <button type="button" id="qm-add-question-btn" class="btn btn-primary btn-sm" onclick="Admin.openAddQuestionModal()">
+            + Add Question
+          </button>
+        </div>
+
+        <div id="qm-questions-list">
+          <!-- Populated by Admin.refreshQuestionsList() -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="Utils.hideModal('modal-questions-manager')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Add / Edit Single Question -->
+  <div id="modal-question-form" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="qform-modal-title">
+    <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 id="qform-modal-title">Author Question</h3>
+        <button type="button" class="modal-close-btn" onclick="Utils.hideModal('modal-question-form')" aria-label="Close modal">&times;</button>
+      </div>
+      <form id="question-form">
+        <div class="modal-body">
+          <div id="question-form-error" class="hidden"></div>
+          <input type="hidden" id="qform-id">
+
+          <div class="form-group">
+            <label class="form-label" for="qform-text">Question Prompt</label>
+            <textarea id="qform-text" class="form-control" rows="3" placeholder="Enter clear, concise question prompt" required></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label" for="qform-opt-a">Option A</label>
+              <input type="text" id="qform-opt-a" class="form-control" placeholder="Option text" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="qform-opt-b">Option B</label>
+              <input type="text" id="qform-opt-b" class="form-control" placeholder="Option text" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="qform-opt-c">Option C</label>
+              <input type="text" id="qform-opt-c" class="form-control" placeholder="Option text" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="qform-opt-d">Option D</label>
+              <input type="text" id="qform-opt-d" class="form-control" placeholder="Option text" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label class="form-label" for="qform-correct">Correct Option Key</label>
+            <select id="qform-correct" class="form-control" required>
+              <option value="0">Option A</option>
+              <option value="1">Option B</option>
+              <option value="2">Option C</option>
+              <option value="3">Option D</option>
+            </select>
+            <small class="text-muted">Normalized to zero-indexed integer (0=A, 1=B, 2=C, 3=D) on the backend.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="Utils.hideModal('modal-question-form')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Question</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: Submit Examination Confirmation -->
+  <div id="modal-submit-exam" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-submit-exam-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-submit-exam-title">Confirm Final Submission</h3>
+        <button type="button" class="modal-close-btn" onclick="Utils.hideModal('modal-submit-exam')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="submit-modal-error" class="hidden"></div>
+        <p>Are you sure you want to finalize and submit your examination answers?</p>
+
+        <div style="background-color: var(--surface-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; margin: 1rem 0;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+            <span>Total Questions:</span>
+            <strong id="submit-modal-total">0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+            <span>Questions Answered:</span>
+            <strong id="submit-modal-answered" style="color: var(--color-success);">0</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Unattempted Questions:</span>
+            <strong id="submit-modal-unanswered" style="color: var(--color-danger);">0</strong>
+          </div>
+        </div>
+
+        <div id="submit-modal-warning" class="alert alert-warning hidden" style="font-size: 0.85rem;"></div>
+
+        <p class="text-muted" style="font-size: 0.8rem; margin: 0;">
+          Once submitted, your answers will be graded immediately by the server. You cannot alter your answers after submission.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-submit" class="btn btn-secondary" onclick="Utils.hideModal('modal-submit-exam')">Return to Exam</button>
+        <button type="button" id="btn-confirm-submit" class="btn btn-primary" onclick="Exam.submitExam(false)">Confirm &amp; Submit Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: View Full Submission Audit (Admin) -->
+  <div id="modal-submission-detail" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-submission-detail-title">
+    <div class="modal-dialog" style="max-width: 780px;">
+      <div class="modal-header">
+        <h3 id="modal-submission-detail-title">Student Submission Audit</h3>
+        <button type="button" class="modal-close-btn" onclick="Utils.hideModal('modal-submission-detail')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-submission-detail-body">
+        <!-- Populated by Admin.viewSubmissionDetails() -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="Utils.hideModal('modal-submission-detail')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       Application Scripts (Strict Vanilla JS - STQA Architecture)
+       ====================================================================== -->
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/student.js"></script>
+  <script src="/js/exam.js"></script>
+  <script src="/js/results.js"></script>
+  <script src="/js/app.js"></script>
+
+</body>
+</html>
