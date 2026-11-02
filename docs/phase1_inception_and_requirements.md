@@ -3,7 +3,7 @@
 
 **Academic Subjects:** Software Testing & Quality Assurance (STQA - LP-IV) & Object-Oriented Design and Modeling (OOMD)  
 **Institution:** Marathwada Mitra Mandal's College of Engineering (MMCOE), Pune (Autonomous Institute affiliated to SPPU)  
-**Authors / Project Team:** Ashlesha Gosavi (BC127), Divya Lokhande (BC136), Bhakti Pate (BC146)  
+**Authors / Project Team:** Soham Pasalkar, Anish Mule, Rohit Falke, Chandraprakash Pandey  
 **Academic Year:** 2026–27 | Semester-VII  
 **Phase Status:** Phase 1 Architecture Decisions Approved & Finalized — Approved Baseline. *(Implementation has not begun).*
 

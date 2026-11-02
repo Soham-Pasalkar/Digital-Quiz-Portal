@@ -18,7 +18,7 @@
     "sql.js",
     "express"
   ],
-  "author": "Ashlesha Gosavi, Divya Lokhande, Bhakti Pate",
+  "author": "Soham Pasalkar, Anish Mule, Rohit Falke, Chandraprakash Pandey",
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.2",

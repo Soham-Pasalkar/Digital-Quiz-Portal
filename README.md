@@ -17,7 +17,12 @@ An institutional, single-page examination platform engineered for **Software Tes
 - **Courses:**
   - Software Testing & Quality Assurance (STQA / LP-IV)
   - Object-Oriented Modeling & Design (OOMD)
-- **Project Team:** Ashlesha Gosavi, Divya Lokhande, Bhakti Pate
+- **Project:** Digital Quiz Portal
+- **Project Team:**
+  - Soham Pasalkar
+  - Anish Mule
+  - Rohit Falke
+  - Chandraprakash Pandey
 - **Authoritative Specifications:**
   - [`docs/STQA_Report.pdf`](docs/STQA_Report.pdf) — Comprehensive Software Testing & QA Report
   - [`docs/OOMD_Report.pdf`](docs/OOMD_Report.pdf) — Object-Oriented Modeling & Design Analysis Report
@@ -186,7 +191,7 @@ digital-quiz-portal/
 ### 1. Installation
 Clone the repository and install dependencies:
 ```bash
-git clone https://github.com/soham/Digital-Quiz-Portal.git
+git clone https://github.com/Soham-Pasalkar/Digital-Quiz-Portal.git
 cd Digital-Quiz-Portal
 npm install
 ```
